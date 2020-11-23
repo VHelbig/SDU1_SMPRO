@@ -30,6 +30,7 @@
 #include "i2cmaster.h"
 #include "PCA9685_SPRO1MC.h"
 
+
 float values[5]={0,0,0,0,0};
 	
 //optocoupler functions:
@@ -104,7 +105,6 @@ float single_speed_measurement(int hole_no)
 	
 }
 
-
 //lcd functions:
 
 void lcd_init(void){ // initializes connection with display over uart and initializes display.
@@ -119,10 +119,12 @@ void display_speed(int speed){
 	printf("page0.x0.val=%d%c%c%c", speed, 255,255,255);
 }
 
-int get_wspeed(void){
+
+		
+	int get_distance(void){
 	char readBuffer[100];
 	uint32_t readValue = 0;
-	printf("get page0.h0.val%c%c%c",255,255,255);	//sends "get page0.n0.val"
+	printf("get page0.n0.val%c%c%c",255,255,255);	//sends "get page0.n0.val"
 	int typeExpected = 0;
 	
 	for(int i = 0; i<8;i++)
@@ -152,8 +154,86 @@ int get_wspeed(void){
 			readValue = readBuffer[1] | (readBuffer[2] << 8) | (readBuffer[3] << 16)| (readBuffer[4] << 24);
 		}
 	}
+
 	return (int)readValue;
 }
+
+
+
+int get_time(void){
+	char readBuffer[100];
+	uint32_t readValue = 0;
+	printf("get page0.n1.val%c%c%c",255,255,255);	//sends "get page0.n0.val"
+	int typeExpected = 0;
+	
+	for(int i = 0; i<8;i++)
+	{
+		scanf("%c", &readBuffer[i]);
+		if(readBuffer[i] == 0x71)//Expect number string
+		{
+			typeExpected = NUMBER_STRING;
+			readBuffer[0] = 0x71;//Move indicator to front, just to keep the nice format
+			break;
+			}else if(readBuffer[i] == 0x1A){//some error occurred - retrieve the 0xFF commands and start over
+			scanf("%c", &readBuffer[i]);
+			scanf("%c", &readBuffer[i]);
+			scanf("%c", &readBuffer[i]);
+			continue;
+		}
+	}
+	if(typeExpected == NUMBER_STRING)
+	{
+		for(int i = 1; i<8; i++)
+		{
+			scanf("%c", &readBuffer[i]);
+		}
+
+		if(readBuffer[0] == 0x71 && readBuffer[5] == 0xFF && readBuffer[6] == 0xFF && readBuffer[7] == 0xFF)//This is a complete number return
+		{
+			readValue = readBuffer[1] | (readBuffer[2] << 8) | (readBuffer[3] << 16)| (readBuffer[4] << 24);
+		}
+	}
+	
+	return (int)readValue;
+}
+
+int get_setting(void){
+	char readBuffer[100];
+	uint32_t readValue = 0;
+	printf("get page0.n2.val%c%c%c",255,255,255);	//sends "get page0.n0.val"
+	int typeExpected = 0;
+	
+	for(int i = 0; i<8;i++)
+	{
+		scanf("%c", &readBuffer[i]);
+		if(readBuffer[i] == 0x71)//Expect number string
+		{
+			typeExpected = NUMBER_STRING;
+			readBuffer[0] = 0x71;//Move indicator to front, just to keep the nice format
+			break;
+			}else if(readBuffer[i] == 0x1A){//some error occurred - retrieve the 0xFF commands and start over
+			scanf("%c", &readBuffer[i]);
+			scanf("%c", &readBuffer[i]);
+			scanf("%c", &readBuffer[i]);
+			continue;
+		}
+	}
+	if(typeExpected == NUMBER_STRING)
+	{
+		for(int i = 1; i<8; i++)
+		{
+			scanf("%c", &readBuffer[i]);
+		}
+
+		if(readBuffer[0] == 0x71 && readBuffer[5] == 0xFF && readBuffer[6] == 0xFF && readBuffer[7] == 0xFF)//This is a complete number return
+		{
+			readValue = readBuffer[1] | (readBuffer[2] << 8) | (readBuffer[3] << 16)| (readBuffer[4] << 24);
+		}
+	}
+
+	return (int)readValue;
+}
+
 
 //pwm functions:
 
