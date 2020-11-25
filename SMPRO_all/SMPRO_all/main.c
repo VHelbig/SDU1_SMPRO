@@ -30,18 +30,69 @@ int main(void)
 	lcd_init();
 	op_init();
 	
-	while(1){
-		for(int i=0;i<4;i++){
-			int distance=-1;
-			int time=-1;
-			read_one_value(&distance,&time);
-			read_one_value(&distance,&time);
-			printf("distance:%d",distance);
-			printf("time:%d",time);
-		}
-		printf("page0.n0.val=-12%c%c%c",0xFF,0xFF,0xFF);
-    }
+	settings_t settings[11];
 	
+	//int speed=0;
+	//int oldspeed=-1;
+	
+	for (int i=0; i<11;i++)
+		{
+			settings[i].distance=0;
+			settings[i].time=0;
+		}
+		
+    while (1) 
+    {
+		change_speed(0);
+		
+		//int i=0;
+		
+	/*while(get_setting()<11)
+		{
+			if(get_setting()==(i+1))
+			{
+				settings[i]=fill_array();
+				_delay_ms(100);
+			}else if(get_setting()>(i+1)){
+				i++;
+			}else{
+				break;
+			}
+		}*/
+		
+		
+		while(get_setting()<11)
+		{
+			
+		for(int i=0; i<11; i++)
+		{
+			if(get_setting()==(i+1))
+			{
+				settings[i-1]=fill_array(); 
+			}
+		}
+		
+		
+		for (int i=0; i<11;i++)
+		{
+			printf("distance %d, time %d\n", settings[i].distance, settings[i].time); 
+		}
+		}
+		
+		/*speed=get_wspeed(); //Speed is the value received from slider on the display 
+		if(speed!=oldspeed){ //Check whether the speed is updated
+			oldspeed=speed;
+			change_speed(speed-50); //Calls the change-speed function, which changes the speed to the new value.
+			
+			if(speed!=50){ //so it doesn´t freeze the program. 
+				display_speed(average_speed_measure(9,3)*100);	//update displayed value	
+			}else{
+				display_speed(0);		
+			}
+		}*/
+		
+		
+    }
 }
 /*settings_t fill_array(void)
 {
