@@ -12,7 +12,7 @@
 //optocoupler functions:
 void op_init(void); // initialize optocoupler
 int is_none_hole(void); // is some in front of the optocoupler
-float average_speed_measure(int hole_no,int presision);
+float average_speed_measure();
 float single_speed_measurement(int hole_no);
 
 //lcd functions:
